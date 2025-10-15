@@ -81,6 +81,14 @@ In common you need to do only one thing - call the `md.Gate_Manage_API.Process_C
 </cue>
 ```
 
+### Standard Result Fields
+
+All commands return a result table with the content of the input arguments and some additional standard fields:
+
+- `$result`: string, either 'success' or 'error'.
+- `$info`: string, additional information about the result, especially in case of an error.
+- `$detail`: string, more detailed information about the result, especially in case of an error. Optional, may be not present.
+
 ## Commands
 
 The following commands with appropriate arguments are supported:
