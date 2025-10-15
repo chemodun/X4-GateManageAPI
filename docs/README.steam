@@ -1,0 +1,202 @@
+[h1]X4-GateManageAPI[/h1]
+
+Provides an in‑game API for managing Jump Gates and Accelerators in X4: Foundations. The API supports creating, connecting or disconnecting, and destroying gates and accelerators.
+
+[h2][b]Features[/b][/h2]
+[list]
+[*] Create Jump Gates and Accelerators at specified positions and orientations, with optional ownership assignment.
+[*] Connect or disconnect existing Jump Gates and Accelerators.
+[*] Destroy existing Jump Gates and Accelerators.
+[*] Provides lists of available gate and accelerator macros id's.
+[*] Asynchronous command processing with callback support.
+[/list]
+[h2][b]Installation[/b][/h2]
+
+[h2]For Modders[/h2]
+
+You can download the latest version via Steam client - [url=https://steamcommunity.com/sharedfiles/filedetails/?id=]Gate Manager[/url]
+Or you can do it via the Nexus Mods - [url=https://www.nexusmods.com/x4foundations/mods/]Gate Manager[/url]
+
+[h2]For Players[/h2]
+
+Normally, you don't need to install this mod manually. It is used as a dependency by other mods that require gate or accelerator management functionality.
+But if you want to install it manually, you can use the links above to download the mod and follow the installation instructions provided there.
+
+[h2][b]Usage[/b][/h2]
+
+The API is designed to be used by other scripts or mods. It provides a set of functions that can be called to perform various operations related to Jump Gates and Accelerators.
+
+[h2]Checking Availability[/h2]
+
+Before using the API, you can check if it is available in the current context:
+
+Simple create a [b]cue[/b] with the reaction on [b]<event_cue_signalled cue="md.Gate_Manage_API.Reloaded" />[/b]:
+
+[h3][b]Example[/b][/h3]
+
+[code]
+<cue name="YouOnReloaded" instantiate="true">
+    <conditions>
+        <event_cue_signalled cue="md.Gate_Manage_API.Reloaded" />
+    </conditions>
+    <actions>
+    <debug_text text="'Gate_Manage_API: Reloaded'" chance="100" filter="general" />
+    ...
+    </actions>
+</cue>
+[/code]
+
+[h2]Main principles[/h2]
+
+In common you need to do only one thing - call the [b]md.Gate_Manage_API.Process_Command[/b] cue with a table of arguments. If you need to get the result of the command, you should provide a callback function in the arguments table. The callback function will be called with a result table when the command is completed.
+
+[h3][b]Basic Example[/b][/h3]
+
+[code]
+<cue name="..." >
+    <actions>
+        ...
+        <set_value name="$args"
+            exact="table[
+                $command  = 'destroy_gate',
+                $gate     = @$gate,
+                $callback = Your_Capture_Results,
+                ]" />
+        <signal_cue_instantly cue="md.Gate_Manage_API.Process_Command" param="$args" />
+        ...
+    </actions>
+</cue>
+
+<cue name="Your_Capture_Results" instantiate="true">
+    <conditions>
+        <event_cue_signalled/>
+    </conditions>
+    <actions>
+        ...
+
+        <set_value name="$result" exact="@event.param" />
+        <debug_text text="'Command %s completed with result %s (%s)'.[@$result.$command, @$result.$result, @$result.$info]" chance="100" filter="general" />
+        ...
+    </actions>
+</cue>
+[/code]
+
+[h2][b]Commands[/b][/h2]
+
+The following commands with appropriate arguments are supported:
+
+[h2]build_gate[/h2]
+
+Creates a new Jump Gate or Accelerator at a specified position and orientation within a sector. It can optionally assign an owner to the created gate or accelerator.
+[list]
+[*] [b]$command[/b]: string, must be 'build_gate'.
+[*] [b]$sector[/b]: sector object (required).
+[*] [b]$macroId[/b]: string (required), the macro ID of the gate or accelerator to create.
+[*] [b]$ownerId[/b]: string (optional, default "'ownerless'"), string "'null'" is possible to indicate no owner.
+[*] [b]$offset[/b]: vector (required), the position offset within the sector.
+[*] [b]$rotation[/b]: quaternion (required if getRotationFromMap is false), the orientation of the gate or accelerator.
+[*] [b]$getRotationFromMap[/b]: boolean (optional, default false), if true, the rotation will be determined based on the sector's map data.
+[*] [b]$callback[/b]: function, the callback function to invoke with the result.
+[/list]
+Returns the created gate or accelerator object in the result table on success. In addition to the input and standard result fields, the result table will contain:
+[list]
+[*] [b]$gate[/b]: gate object, the created gate or accelerator (only on success).
+[/list]
+[h2]connect_gates[/h2]
+
+Connects two Jump Gates or Accelerators, allowing for instant travel between them.
+[list]
+[*] [b]$command[/b]: string, must be 'connect_gates'.
+[*] [b]$gateSource[/b]: gate object (required), the first (source) gate to connect.
+[*] [b]$gateTarget[/b]: gate object (required), the second (target) gate to connect.
+[*] [b]$callback[/b]: function, the callback function to invoke with the result.
+[/list]
+[h2]disconnect_gates[/h2]
+
+Disconnects two connected Jump Gates or Accelerators.
+[list]
+[*] [b]$command[/b]: string, must be 'disconnect_gates'.
+[*] [b]$gateSource[/b]: gate object (required), the first (source) gate to disconnect.
+[*] [b]$gateTarget[/b]: gate object (required), the second (target) gate to disconnect.
+[*] [b]$callback[/b]: function, the callback function to invoke with the result.
+[/list]
+[h2]destroy_gate[/h2]
+
+Destroys an existing Jump Gate or Accelerator.
+[list]
+[*] [b]$command[/b]: string, must be 'destroy_gate'.
+[*] [b]$gate[/b]: gate object (required), the gate or accelerator to destroy.
+[*] [b]$callback[/b]: function, the callback function to invoke with the result.
+[/list]
+In addition to the input and standard result fields, the result table will contain:
+[list]
+[*] [b]$name[/b]: gate object name, the name of the destroyed gate or accelerator.
+[*] [b]$sector[/b]: sector object, the sector where the destroyed gate or accelerator was located.
+[/list]
+[h2]mark_gate[/h2]
+
+Marks a Jump Gate or Accelerator on a map for easier identification.
+[list]
+[*] [b]$command[/b]: string, must be 'mark_gate'.
+[*] [b]$gate[/b]: gate object (required), the gate or accelerator to mark.
+[*] [b]$callback[/b]: function, the callback function to invoke with the result.
+[/list]
+[h2]unmark_gate[/h2]
+
+Removes a previously marked selection of an Jump Gate or Accelerator on a map.
+[list]
+[*] [b]$command[/b]: string, must be 'unmark_gate'.
+[*] [b]$gate[/b]: gate object (required), the gate or accelerator to unmark.
+[*] [b]$callback[/b]: function, the callback function to invoke with the result.
+[/list]
+[h2]get_macro_tables[/h2]
+
+Retrieves the available macros for Jump Gates and Accelerators as a tables.
+[list]
+[*] [b]$command[/b]: string, must be 'get_macro_tables'.
+[*] [b]$callback[/b]: function, the callback function to invoke with the result.
+[/list]
+In addition to the input and standard result fields, the result table will contain:
+[list]
+[*] [b]$gatesTable[/b]: list of tables for the available Jump Gates macros.
+[*] [b]$acceleratorsTable[/b]: list of tables for the available Accelerators macros.
+[/list]
+Each table in the lists will contain:
+[list]
+[*] [b]$name[/b]: string, the name of the macro.
+[*] [b]$macroId[/b]: string, the ID of the macro.
+[*] [b]$icon[/b]: string, the icon associated with the macro.
+[*] [b]$isAccelerator[/b]: boolean, true if the macro is for an Accelerator
+[/list]
+Unfortunately, due to a limitation in the game's lua engine, at least for now, the only way to identify if a macro is for an Accelerator or a Jump Gate is by checking the icon field. If the icon is [b]mapob_transorbital_accelerator[/b], then it is an Accelerator, if it is [b]mapob_jumpgate[/b], then it is a Jump Gate.
+So, if some mod adds new gates or accelerators with different icons, they will not be correctly identified by this API.
+
+[i]If someone knows a better way to identify the type of macro, please let me know.[/i]
+
+[h2][b]Reference[/b][/h2]
+
+Currently, there is only one mod that uses this API - [b]Gate Manager[/b]:
+[list]
+[*] [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3577926900]On Steam[/url]
+[*] [url=https://www.nexusmods.com/x4foundations/mods/1842]On Nexus Mods[/url]
+[/list]
+[h2][b]Credits[/b][/h2]
+[list]
+[*] Author: Chem O`Dun, on [url=https://next.nexusmods.com/profile/ChemODun/mods?gameId=2659]Nexus Mods[/url] and [url=https://steamcommunity.com/id/chemodun/myworkshopfiles/?appid=392160]Steam Workshop[/url]
+[*] [i]"X4: Foundations"[/i] is a trademark of [url=https://www.egosoft.com]Egosoft[/url].
+[/list]
+[h2][b]Acknowledgements[/b][/h2]
+[list]
+[*] [url=https://www.egosoft.com]EGOSOFT[/url] - for the game itself (In fact - for the series of games)!
+[*] Enormous big thank to [url=https://github.com/Forleyor]Forleyor[/url], for his help with Lua! For make me curious about it and for his patience! Without him I will never touched the Lua and started to make this mod!
+[*] Thanks to all members of the [url=https://discord.com/channels/337098290917146624/502057640877228042]X4 modding channel[/url] on [url=https://discord.com/invite/zhs8sRpd3m]Egosoft Discord[/url].
+[/list]
+[h2][b]Changelog[/b][/h2]
+
+[h2][1.00] - 2024-10-15[/h2]
+[list]
+[*] Added
+[list]
+[*] Initial public version
+[/list]
+[/list]
