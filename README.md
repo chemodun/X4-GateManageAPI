@@ -1,4 +1,4 @@
-# X4-GateManageAPI
+# Gate Manage API
 
 Provides an in‑game API for managing Jump Gates and Accelerators in X4: Foundations. The API supports creating, connecting or disconnecting, and destroying gates and accelerators.
 
