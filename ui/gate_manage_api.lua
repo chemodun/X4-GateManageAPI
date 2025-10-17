@@ -124,8 +124,8 @@ local function recordResult(data)
   debugTrace("recordResult called for command ".. tostring(data and data.command) .. " with result " .. tostring(data and data.result))
   if GateManageAPI.playerId ~= 0 then
     local payload = data or {}
-    SetNPCBlackboard(GateManageAPI.playerId, "$GateManageAPIResult", payload)
-    AddUITriggeredEvent("Gate_Manage_API", "CommandResult")
+    SetNPCBlackboard(GateManageAPI.playerId, "$GateManageAPIResponse", payload)
+    AddUITriggeredEvent("Gate_Manage_API", "Response")
   end
 end
 
@@ -156,11 +156,11 @@ local function getArgs()
   if GateManageAPI.playerId == 0 then
     debugTrace("getArgs unable to resolve player id")
   else
-    local list = GetNPCBlackboard(GateManageAPI.playerId, "$GateManageAPICommand")
+    local list = GetNPCBlackboard(GateManageAPI.playerId, "$GateManageAPIRequest")
     if type(list) == "table" then
       debugTrace("getArgs retrieved " .. tostring(#list) .. " entries from blackboard")
       local args = list[#list]
-      SetNPCBlackboard(GateManageAPI.playerId, "$GateManageAPICommand", nil)
+      SetNPCBlackboard(GateManageAPI.playerId, "$GateManageAPIRequest", nil)
       return args
     elseif list ~= nil then
       debugTrace("getArgs received non-table payload of type " .. type(list))
@@ -400,14 +400,14 @@ function GateManageAPI.MarkGateOnMap(args)
   reportSuccess(args)
 end
 
-function GateManageAPI.HandleCommand(_, _)
+function GateManageAPI.ProcessRequest(_, _)
   local args = getArgs()
   if not args or type(args) ~= "table" then
-    debugTrace("HandleCommand invoked without args or invalid args")
+    debugTrace("ProcessRequest invoked without args or invalid args")
     reportError("missing_args")
     return
   end
-  debugTrace("HandleCommand received command: " .. tostring(args.command))
+  debugTrace("ProcessRequest received command: " .. tostring(args.command))
   if args.command == "build_gate" then
     GateManageAPI.CreateGate(args)
   elseif args.command == "connect_gates" then
@@ -421,7 +421,7 @@ function GateManageAPI.HandleCommand(_, _)
     args.accelerators = GateManageAPI.acceleratorsTable
     reportSuccess(args)
   else
-    debugTrace("HandleCommand received unknown command: " .. tostring(args.command))
+    debugTrace("ProcessRequest received unknown command: " .. tostring(args.command))
     args.info = "UnknownCommand"
     reportError(args)
   end
@@ -430,11 +430,11 @@ end
 function GateManageAPI.Init()
   getPlayerId()
   ---@diagnostic disable-next-line: undefined-global
-  RegisterEvent("GateManageAPI.HandleCommand", GateManageAPI.HandleCommand)
+  RegisterEvent("GateManageAPI.Request", GateManageAPI.ProcessRequest)
   AddUITriggeredEvent("Gate_Manage_API", "Reloaded")
   GateManageAPI.CollectGateMacros()
 end
 
-Register_Require_With_Init("extensions.gate_manager.ui.gate_manager", GateManageAPI, GateManageAPI.Init)
+Register_Require_With_Init("extensions.gate_manage_api.ui.gate_manage_api", GateManageAPI, GateManageAPI.Init)
 
 return GateManageAPI
