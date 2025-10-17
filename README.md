@@ -12,15 +12,8 @@ Provides an in‑game API for managing Jump Gates and Accelerators in X4: Founda
 
 ## Installation
 
-### For Modders
-
 You can download the latest version via Steam client - [Gate Manager](https://steamcommunity.com/sharedfiles/filedetails/?id=3588643062)
 Or you can do it via the Nexus Mods - [Gate Manager](https://www.nexusmods.com/x4foundations/mods/1856)
-
-### For Players
-
-Normally, you don't need to install this mod manually. It is used as a dependency by other mods that require gate or accelerator management functionality.
-But if you want to install it manually, you can use the links above to download the mod and follow the installation instructions provided there.
 
 ## Usage
 
