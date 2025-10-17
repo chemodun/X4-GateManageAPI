@@ -14,8 +14,8 @@ Provides an in‑game API for managing Jump Gates and Accelerators in X4: Founda
 
 [size=125][u]For Modders[/u][/size]
 
-You can download the latest version via Steam client - [url=https://steamcommunity.com/sharedfiles/filedetails/?id=]Gate Manager[/url]
-Or you can do it via the Nexus Mods - [url=https://www.nexusmods.com/x4foundations/mods/]Gate Manager[/url]
+You can download the latest version via Steam client - [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3588643062]Gate Manager[/url]
+Or you can do it via the Nexus Mods - [url=https://www.nexusmods.com/x4foundations/mods/1856]Gate Manager[/url]
 
 [size=125][u]For Players[/u][/size]
 
@@ -48,7 +48,7 @@ Simple create a [b]cue[/b] with the reaction on [b]<event_cue_signalled cue="md.
 
 [size=125][u]Main principles[/u][/size]
 
-In common you need to do only one thing - call the [b]md.Gate_Manage_API.Process_Command[/b] cue with a table of arguments. If you need to get the result of the command, you should provide a callback function in the arguments table. The callback function will be called with a result table when the command is completed.
+In common you need to do only one thing - call the [b]md.Gate_Manage_API.Request[/b] cue with a table of arguments. If you need to get the result of the command, you should provide a callback function in the arguments table. The callback function will be called with a result table when the command is completed.
 
 [size=120][u]Basic Example[/u][/size]
 
@@ -62,7 +62,7 @@ In common you need to do only one thing - call the [b]md.Gate_Manage_API.Process
                 $gate     = @$gate,
                 $callback = Your_Capture_Results,
                 ]" />
-        <signal_cue_instantly cue="md.Gate_Manage_API.Process_Command" param="$args" />
+        <signal_cue_instantly cue="md.Gate_Manage_API.Request" param="$args" />
         ...
     </actions>
 </cue>
@@ -183,7 +183,7 @@ So, if some mod adds new gates or accelerators with different icons, they will n
 
 [size=130][u]Reference[/u][/size]
 
-Currently, there is only one mod that uses this API - [b]Gate Manager[/b]:
+Currently, there is only one mod that uses this API - [b]Gate Manager[/b], from version 1.16 and above:
 [list]
 [*] [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3577926900]On Steam[/url]
 [*] [url=https://www.nexusmods.com/x4foundations/mods/1842]On Nexus Mods[/url]
@@ -197,11 +197,12 @@ Currently, there is only one mod that uses this API - [b]Gate Manager[/b]:
 [list]
 [*] [url=https://www.egosoft.com]EGOSOFT[/url] - for the game itself (In fact - for the series of games)!
 [*] Enormous big thank to [url=https://github.com/Forleyor]Forleyor[/url], for his help with Lua! For make me curious about it and for his patience! Without him I will never touched the Lua and started to make this mod!
+[*] Thanks to [b]cheapman44[/b] for the discussion on Discord about the gate management which pushed me to make this API.
 [*] Thanks to all members of the [url=https://discord.com/channels/337098290917146624/502057640877228042]X4 modding channel[/url] on [url=https://discord.com/invite/zhs8sRpd3m]Egosoft Discord[/url].
 [/list]
 [size=130][u]Changelog[/u][/size]
 
-[size=125][u][1.00] - 2024-10-15[/u][/size]
+[size=125][u][1.00] - 2024-10-17[/u][/size]
 [list]
 [*] Added
 [list]
