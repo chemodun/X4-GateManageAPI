@@ -195,7 +195,12 @@ Currently, there is only one mod that uses this API - `Gate Manager`, from versi
 
 ## Changelog
 
-### [1.00] - 2024-10-17
+### [1.01] - 2025-10-18
+
+- Fixed
+  - Missed dependency declaration for SirNukes Mod Support APIs
+
+### [1.00] - 2025-10-17
 
 - Added
   - Initial public version
