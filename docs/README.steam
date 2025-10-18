@@ -195,7 +195,14 @@ Currently, there is only one mod that uses this API - [b]Gate Manager[/b], from 
 [/list]
 [h2][b]Changelog[/b][/h2]
 
-[h2][1.00] - 2024-10-17[/h2]
+[h2][1.01] - 2025-10-18[/h2]
+[list]
+[*] Fixed
+[list]
+[*] Missed dependency declaration for SirNukes Mod Support APIs
+[/list]
+[/list]
+[h2][1.00] - 2025-10-17[/h2]
 [list]
 [*] Added
 [list]
