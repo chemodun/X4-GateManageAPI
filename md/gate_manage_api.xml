@@ -56,9 +56,9 @@
             - $sector: sector object (required)
             - $macroId: string (required)
             - $ownerId: string (optional, default "'ownerless'"), string "'null'" is possible to indicate no owner
-            - $offset: vector (required)
-            - $rotation: quaternion (required if getRotationFromMap is false)
-            - $getRotationFromMap: boolean (optional, default false)
+            - $offset: table[$x, $y, $z] in metres (required)
+            - $rotation: table[$yaw, $pitch, $roll] in degrees, as plain numbers without a unit suffix (optional, falls back to the map rotation when absent)
+            - $getRotationFromMap: boolean (optional, default false), ignores $rotation when true
             - $callback: function name (optional)
 
           - $command = 'connect_gates', with other table fields:
@@ -87,7 +87,7 @@
             - $callback: function name (required)
         -->
 
-        <cue name="Request" instantiate="true">
+        <cue name="Request" instantiate="true" version="2">
           <conditions>
             <event_cue_signalled />
           </conditions>
@@ -132,11 +132,12 @@
                 <do_if value="$args? and @$args != null">
                   <do_if value="@$args.$getRotationFromMap == null">
                     <set_value name="$args.$getRotationFromMap" exact="false" />
+                  </do_if>
+                  <!-- Missing rotation is not an error: it falls back to the map rotation, as it always has. -->
+                  <do_if value="not @$args.$getRotationFromMap">
                     <do_if value="not $args.$rotation? or @$args.$rotation == null">
-                      <debug_text text="'Gate_Manage_API: build_gate invoked without valid rotation.'"
+                      <debug_text text="'Gate_Manage_API: build_gate invoked without rotation, falling back to the map rotation.'"
                         chance="100" filter="scripts" />
-                      <set_value name="$errorInfo" exact="'InvalidRotation'" />
-                      <set_value name="$errorDetail" exact="'Rotation is missing or invalid'" />
                     </do_if>
                   </do_if>
                 </do_if>

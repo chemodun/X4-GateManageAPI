@@ -94,9 +94,9 @@ Creates a new Jump Gate or Accelerator at a specified position and orientation w
 - `$sector`: sector object (required).
 - `$macroId`: string (required), the macro ID of the gate or accelerator to create.
 - `$ownerId`: string (optional, default "'ownerless'"), string "'null'" is possible to indicate no owner.
-- `$offset`: vector (required), the position offset within the sector.
-- `$rotation`: quaternion (required if getRotationFromMap is false), the orientation of the gate or accelerator.
-- `$getRotationFromMap`: boolean (optional, default false), if true, the rotation will be determined based on the sector's map data.
+- `$offset`: table (required), the position offset within the sector, as `table[$x = ..., $y = ..., $z = ...]` in metres.
+- `$rotation`: table (optional), the orientation of the gate or accelerator, as `table[$yaw = ..., $pitch = ..., $roll = ...]`, with the angles as plain numbers in **degrees**. Do not use MD unit suffixes: `$yaw = 90` is 90 degrees, while `$yaw = 90deg` arrives as radians and gives an almost unrotated gate. When `$rotation` is absent the rotation falls back to the map rotation. Note that an MD `position` or `rotation` value cannot be passed here - a plain table is required.
+- `$getRotationFromMap`: boolean (optional, default false), if true, the rotation will be determined based on the sector's map data and `$rotation` is ignored.
 - `$callback`: function, the callback function to invoke with the result.
 
 Returns the created gate or accelerator object in the result table on success. In addition to the input and standard result fields, the result table will contain:
@@ -194,6 +194,16 @@ Currently, there is only one mod that uses this API - `Gate Manager`, from versi
 - Thanks to all members of the [X4 modding channel](https://discord.com/channels/337098290917146624/502057640877228042) on [Egosoft Discord](https://discord.com/invite/zhs8sRpd3m).
 
 ## Changelog
+
+### [1.02] - 2026-09-08
+
+- Fixed
+  - `build_gate` ignored a supplied `$rotation` and always used the map rotation, even when `$getRotationFromMap` was false, thanks to Bamfon for reporting and proposing a fix
+  - A failed gate spawn was reported as a success
+
+- Changed
+  - Documented `$offset` and `$rotation` as plain tables, which is what the API actually accepts
+  - `$rotation` is now optional in every case, falling back to the map rotation when it is absent
 
 ### [1.01] - 2025-10-18
 

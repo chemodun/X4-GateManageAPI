@@ -79,6 +79,11 @@ local function toUniverseId(value)
   return ConvertStringTo64Bit(idStr)
 end
 
+-- MD sends booleans across the blackboard as 0/1, and 0 is truthy in Lua.
+local function toBool(value)
+  return value == true or value == 1
+end
+
 local function RevertAndApplyMapRotation()
   local pi = math.pi
   local twoPi = 2 * pi
@@ -90,9 +95,9 @@ local function RevertAndApplyMapRotation()
     debugTrace(string.format("MapState: pitch %f, yaw %f, roll %f", mapstate.offset.pitch, mapstate.offset.yaw,
       mapstate.offset.roll))
     -- modulo in Lua can be tricky with negatives, so use this pattern
-    angle = (mapstate.offset.yaw + pi) % twoPi
+    local angle = (mapstate.offset.yaw + pi) % twoPi
     if angle > pi then
-        angle = angle - twoPi
+      angle = angle - twoPi
     end
     return angle
   else
@@ -103,25 +108,25 @@ end
 
 local function toPosRot(offset, rotation)
   local posRot = ffi.new("UIPosRot")
-  if offset and type(offset) == "table" then
+  if type(offset) == "table" then
     posRot.x = offset.x or 0.0
     posRot.y = offset.y or 0.0
     posRot.z = offset.z or 0.0
-    if rotation and type(rotation) == "table" then
-      posRot.yaw = rotation.yaw or 0.0
-      posRot.pitch = rotation.pitch or 0.0
-      posRot.roll = rotation.roll or 0.0
-    else
-      posRot.yaw = RevertAndApplyMapRotation() * 180.0 / math.pi
-      posRot.pitch = 0.0
-      posRot.roll = 0.0
-    end
+  end
+  if type(rotation) == "table" then
+    posRot.yaw = rotation.yaw or 0.0
+    posRot.pitch = rotation.pitch or 0.0
+    posRot.roll = rotation.roll or 0.0
+  else
+    posRot.yaw = RevertAndApplyMapRotation() * 180.0 / math.pi
+    posRot.pitch = 0.0
+    posRot.roll = 0.0
   end
   return posRot
 end
 
 local function recordResult(data)
-  debugTrace("recordResult called for command ".. tostring(data and data.command) .. " with result " .. tostring(data and data.result))
+  debugTrace("recordResult called for command " .. tostring(data and data.command) .. " with result " .. tostring(data and data.result))
   if GateManageAPI.playerId ~= 0 then
     local payload = data or {}
     SetNPCBlackboard(GateManageAPI.playerId, "$GateManageAPIResponse", payload)
@@ -130,7 +135,7 @@ local function recordResult(data)
 end
 
 local function reportError(data)
-  local data = data or {}
+  data = data or {}
   data.result = "error"
   recordResult(data)
 
@@ -255,12 +260,12 @@ function GateManageAPI.CreateGate(args)
   end
 
   local posRot = nil
-  if (args.getRotationFromMap) then
+  if toBool(args.getRotationFromMap) then
     posRot = toPosRot(args.offset, nil)
   else
     posRot = toPosRot(args.offset, args.rotation)
   end
-  debugTrace(string.format("Spawning gate with macro %s at x=%f, y=%f, z=%f, yaw=%f, pitch=%f, roll=%f", macro, posRot.x, posRot.y,
+  debugTrace(string.format("Spawning gate with macro %s at x=%f, y=%f, z=%f, yaw=%f, pitch=%f, roll=%f", macroId, posRot.x, posRot.y,
     posRot.z, posRot.yaw, posRot.pitch, posRot.roll))
 
   local ownerId = args.ownerId
@@ -271,7 +276,7 @@ function GateManageAPI.CreateGate(args)
 
   local object = C.SpawnObjectAtPos2(macroId, sector, posRot, ownerId)
 
-  if object == nil then
+  if object == nil or object == 0 then
     args.info = "SpawnFailed"
     reportError(args)
     return
@@ -404,7 +409,7 @@ function GateManageAPI.ProcessRequest(_, _)
   local args = getArgs()
   if not args or type(args) ~= "table" then
     debugTrace("ProcessRequest invoked without args or invalid args")
-    reportError("missing_args")
+    reportError({ info = "MissingArgs" })
     return
   end
   debugTrace("ProcessRequest received command: " .. tostring(args.command))
