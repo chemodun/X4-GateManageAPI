@@ -23,7 +23,7 @@ The API is designed to be used by other scripts or mods. It provides a set of fu
 
 Before using the API, you can check if it is available in the current context:
 
-Simple create a [b]cue[/b] with the reaction on [b]<event_cue_signalled cue="md.Gate_Manage_API.Reloaded" />[/b]:
+Simple create a [b]cue[/b] with the reaction on `<event_cue_signalled cue="md.Gate_Manage_API.Reloaded" />`:
 
 [size=3][u]Example[/u][/size]
 
@@ -78,9 +78,9 @@ In common you need to do only one thing - call the [b]md.Gate_Manage_API.Request
 
 All commands return a result table with the content of the input arguments and some additional standard fields:
 [list]
-[*] [b]$result[/b]: string, either 'success' or 'error'.
-[*] [b]$info[/b]: string, additional information about the result, especially in case of an error.
-[*] [b]$detail[/b]: string, more detailed information about the result, especially in case of an error. Optional, may be not present.
+[*] `$result`: string, either 'success' or 'error'.
+[*] `$info`: string, additional information about the result, especially in case of an error.
+[*] `$detail`: string, more detailed information about the result, especially in case of an error. Optional, may be not present.
 [/list]
 [size=3][u][b]Commands[/b][/u][/size]
 
@@ -90,93 +90,93 @@ The following commands with appropriate arguments are supported:
 
 Creates a new Jump Gate or Accelerator at a specified position and orientation within a sector. It can optionally assign an owner to the created gate or accelerator.
 [list]
-[*] [b]$command[/b]: string, must be 'build_gate'.
-[*] [b]$sector[/b]: sector object (required).
-[*] [b]$macroId[/b]: string (required), the macro ID of the gate or accelerator to create.
-[*] [b]$ownerId[/b]: string (optional, default "'ownerless'"), string "'null'" is possible to indicate no owner.
-[*] [b]$offset[/b]: vector (required), the position offset within the sector.
-[*] [b]$rotation[/b]: quaternion (required if getRotationFromMap is false), the orientation of the gate or accelerator.
-[*] [b]$getRotationFromMap[/b]: boolean (optional, default false), if true, the rotation will be determined based on the sector's map data.
-[*] [b]$callback[/b]: function, the callback function to invoke with the result.
+[*] `$command`: string, must be 'build_gate'.
+[*] `$sector`: sector object (required).
+[*] `$macroId`: string (required), the macro ID of the gate or accelerator to create.
+[*] `$ownerId`: string (optional, default "'ownerless'"), string "'null'" is possible to indicate no owner.
+[*] `$offset`: table (required), the position offset within the sector, as [b]table[$x = ..., $y = ..., $z = ...][/b] in metres.
+[*] `$rotation`: table (optional), the orientation of the gate or accelerator, as `table[$yaw = ..., $pitch = ..., $roll = ...]`, with the angles as plain numbers in [b]degrees[/b]. Do not use MD unit suffixes: [b]$yaw = 90[/b] is 90 degrees, while [b]$yaw = 90deg[/b] arrives as radians and gives an almost unrotated gate. When [b]$rotation[/b] is absent the rotation falls back to the map rotation. Note that an MD [b]position[/b] or [b]rotation[/b] value cannot be passed here - a plain table is required.
+[*] `$getRotationFromMap`: boolean (optional, default false), if true, the rotation will be determined based on the sector's map data and [b]$rotation[/b] is ignored.
+[*] `$callback`: function, the callback function to invoke with the result.
 [/list]
 Returns the created gate or accelerator object in the result table on success. In addition to the input and standard result fields, the result table will contain:
 [list]
-[*] [b]$gate[/b]: gate object, the created gate or accelerator (only on success).
+[*] `$gate`: gate object, the created gate or accelerator (only on success).
 [/list]
 [size=3][u][i]connect_gates[/i][/u][/size]
 
 Connects two Jump Gates or Accelerators, allowing for instant travel between them.
 [list]
-[*] [b]$command[/b]: string, must be 'connect_gates'.
-[*] [b]$gateSource[/b]: gate object (required), the first (source) gate to connect.
-[*] [b]$gateTarget[/b]: gate object (required), the second (target) gate to connect.
-[*] [b]$callback[/b]: function, the callback function to invoke with the result.
+[*] `$command`: string, must be 'connect_gates'.
+[*] `$gateSource`: gate object (required), the first (source) gate to connect.
+[*] `$gateTarget`: gate object (required), the second (target) gate to connect.
+[*] `$callback`: function, the callback function to invoke with the result.
 [/list]
 [size=3][u][i]disconnect_gates[/i][/u][/size]
 
 Disconnects two connected Jump Gates or Accelerators.
 [list]
-[*] [b]$command[/b]: string, must be 'disconnect_gates'.
-[*] [b]$gateSource[/b]: gate object (required), the first (source) gate to disconnect.
-[*] [b]$gateTarget[/b]: gate object (required), the second (target) gate to disconnect.
-[*] [b]$callback[/b]: function, the callback function to invoke with the result.
+[*] `$command`: string, must be 'disconnect_gates'.
+[*] `$gateSource`: gate object (required), the first (source) gate to disconnect.
+[*] `$gateTarget`: gate object (required), the second (target) gate to disconnect.
+[*] `$callback`: function, the callback function to invoke with the result.
 [/list]
 [size=3][u][i]destroy_gate[/i][/u][/size]
 
 Destroys an existing Jump Gate or Accelerator.
 [list]
-[*] [b]$command[/b]: string, must be 'destroy_gate'.
-[*] [b]$gate[/b]: gate object (required), the gate or accelerator to destroy.
-[*] [b]$callback[/b]: function, the callback function to invoke with the result.
+[*] `$command`: string, must be 'destroy_gate'.
+[*] `$gate`: gate object (required), the gate or accelerator to destroy.
+[*] `$callback`: function, the callback function to invoke with the result.
 [/list]
 In addition to the input and standard result fields, the result table will contain:
 [list]
-[*] [b]$name[/b]: gate object name, the name of the destroyed gate or accelerator.
-[*] [b]$sector[/b]: sector object, the sector where the destroyed gate or accelerator was located.
+[*] `$name`: gate object name, the name of the destroyed gate or accelerator.
+[*] `$sector`: sector object, the sector where the destroyed gate or accelerator was located.
 [/list]
 [size=3][u][i]mark_gate[/i][/u][/size]
 
 Marks a Jump Gate or Accelerator on a map for easier identification.
 [list]
-[*] [b]$command[/b]: string, must be 'mark_gate'.
-[*] [b]$gate[/b]: gate object (required), the gate or accelerator to mark.
-[*] [b]$callback[/b]: function, the callback function to invoke with the result.
+[*] `$command`: string, must be 'mark_gate'.
+[*] `$gate`: gate object (required), the gate or accelerator to mark.
+[*] `$callback`: function, the callback function to invoke with the result.
 [/list]
 [size=3][u][i]unmark_gate[/i][/u][/size]
 
 Removes a previously marked selection of an Jump Gate or Accelerator on a map.
 [list]
-[*] [b]$command[/b]: string, must be 'unmark_gate'.
-[*] [b]$gate[/b]: gate object (required), the gate or accelerator to unmark.
-[*] [b]$callback[/b]: function, the callback function to invoke with the result.
+[*] `$command`: string, must be 'unmark_gate'.
+[*] `$gate`: gate object (required), the gate or accelerator to unmark.
+[*] `$callback`: function, the callback function to invoke with the result.
 [/list]
 [size=3][u][i]get_macro_tables[/i][/u][/size]
 
 Retrieves the available macros for Jump Gates and Accelerators as a tables.
 [list]
-[*] [b]$command[/b]: string, must be 'get_macro_tables'.
-[*] [b]$callback[/b]: function, the callback function to invoke with the result.
+[*] `$command`: string, must be 'get_macro_tables'.
+[*] `$callback`: function, the callback function to invoke with the result.
 [/list]
 In addition to the input and standard result fields, the result table will contain:
 [list]
-[*] [b]$gatesTable[/b]: list of tables for the available Jump Gates macros.
-[*] [b]$acceleratorsTable[/b]: list of tables for the available Accelerators macros.
+[*] `$gatesTable`: list of tables for the available Jump Gates macros.
+[*] `$acceleratorsTable`: list of tables for the available Accelerators macros.
 [/list]
 Each table in the lists will contain:
 [list]
-[*] [b]$name[/b]: string, the name of the macro.
-[*] [b]$macroId[/b]: string, the ID of the macro.
-[*] [b]$icon[/b]: string, the icon associated with the macro.
-[*] [b]$isAccelerator[/b]: boolean, true if the macro is for an Accelerator
+[*] `$name`: string, the name of the macro.
+[*] `$macroId`: string, the ID of the macro.
+[*] `$icon`: string, the icon associated with the macro.
+[*] `$isAccelerator`: boolean, true if the macro is for an Accelerator
 [/list]
-Unfortunately, due to a limitation in the game's lua engine, at least for now, the only way to identify if a macro is for an Accelerator or a Jump Gate is by checking the icon field. If the icon is [b]mapob_transorbital_accelerator[/b], then it is an Accelerator, if it is [b]mapob_jumpgate[/b], then it is a Jump Gate.
+Unfortunately, due to a limitation in the game's lua engine, at least for now, the only way to identify if a macro is for an Accelerator or a Jump Gate is by checking the icon field. If the icon is `mapob_transorbital_accelerator`, then it is an Accelerator, if it is `mapob_jumpgate`, then it is a Jump Gate.
 So, if some mod adds new gates or accelerators with different icons, they will not be correctly identified by this API.
 
 [i]If someone knows a better way to identify the type of macro, please let me know.[/i]
 
 [size=3][u][b]Reference[/b][/u][/size]
 
-Currently, there is only one mod that uses this API - [b]Gate Manager[/b], from version 1.16 and above:
+Currently, there is only one mod that uses this API - `Gate Manager`, from version 1.16 and above:
 [list]
 [*] [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3577926900]On Steam[/url]
 [*] [url=https://www.nexusmods.com/x4foundations/mods/1842]On Nexus Mods[/url]
@@ -195,6 +195,19 @@ Currently, there is only one mod that uses this API - [b]Gate Manager[/b], from 
 [/list]
 [size=3][u][b]Changelog[/b][/u][/size]
 
+[size=3][u][i][1.02] - 2026-09-08[/i][/u][/size]
+[list]
+[*] Fixed
+[list]
+[*] [b]build_gate[/b] ignored a supplied [b]$rotation[/b] and always used the map rotation, even when [b]$getRotationFromMap[/b] was false, thanks to Bamfon for reporting and proposing a fix
+[*] A failed gate spawn was reported as a success
+[/list]
+[*] Changed
+[list]
+[*] Documented [b]$offset[/b] and [b]$rotation[/b] as plain tables, which is what the API actually accepts
+[*] [b]$rotation[/b] is now optional in every case, falling back to the map rotation when it is absent
+[/list]
+[/list]
 [size=3][u][i][1.01] - 2025-10-18[/i][/u][/size]
 [list]
 [*] Fixed
