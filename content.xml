@@ -2,10 +2,12 @@
 <content
   id="ws_3588643062"
   author="Chem O`Dun"
-  version="101"
-  date="2025-10-18"
+  version="102"
+  date="2026-09-08"
   save="false"
-  lastupdate="1760781920"
+  sync="false"
+  enabled="true"
+  lastupdate="1788860083"
   name="Gate Manage API"
   description="Provides an in‑game API for managing Jump Gates and Accelerators in X4: Foundations. The API supports creating, connecting or disconnecting, and destroying gates and accelerators.&#13;&#10;&#13;&#10;[h2][b]Features[/b][/h2]&#13;&#10;[list]&#13;&#10;[*] Create Jump Gates and Accelerators at specified positions and orientations, with optional ownership assignment.&#13;&#10;[*] Connect or disconnect existing Jump Gates and Accelerators.&#13;&#10;[*] Destroy existing Jump Gates and Accelerators.&#13;&#10;[*] Provides lists of available gate and accelerator macros id's.&#13;&#10;[*] Asynchronous command processing with callback support.&#13;&#10;[/list]&#13;&#10;[h2][b]Installation[/b][/h2]&#13;&#10;&#13;&#10;You can download the latest version via Steam client - [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3588643062]Gate Manager[/url]&#13;&#10;Or you can do it via the Nexus Mods - [url=https://www.nexusmods.com/x4foundations/mods/1856]Gate Manager[/url]&#13;&#10;&#13;&#10;[h2][b]Usage[/b][/h2]&#13;&#10;&#13;&#10;The API is designed to be used by other scripts or mods. It provides a set of functions that can be called to perform various operations related to Jump Gates and Accelerators.&#13;&#10;&#13;&#10;&#13;&#10;[h2]Main principles[/h2]&#13;&#10;&#13;&#10;In common you need to do only one thing - call the [b]md.Gate_Manage_API.Request[/b] cue with a table of arguments. If you need to get the result of the command, you should provide a callback function in the arguments table. The callback function will be called with a result table when the command is completed.&#13;&#10;&#13;&#10;[h3][b]Basic Example[/b][/h3]&#13;&#10;&#13;&#10;[code]&#13;&#10;&lt;cue name=&quot;...&quot; &gt;&#13;&#10;    &lt;actions&gt;&#13;&#10;        ...&#13;&#10;        &lt;set_value name=&quot;$args&quot;&#13;&#10;            exact=&quot;table[&#13;&#10;                $command  = 'destroy_gate',&#13;&#10;                $gate     = @$gate,&#13;&#10;                $callback = Your_Capture_Results,&#13;&#10;                ]&quot; /&gt;&#13;&#10;        &lt;signal_cue_instantly cue=&quot;md.Gate_Manage_API.Request&quot; param=&quot;$args&quot; /&gt;&#13;&#10;        ...&#13;&#10;    &lt;/actions&gt;&#13;&#10;&lt;/cue&gt;&#13;&#10;&#13;&#10;&lt;cue name=&quot;Your_Capture_Results&quot; instantiate=&quot;true&quot;&gt;&#13;&#10;    &lt;conditions&gt;&#13;&#10;        &lt;event_cue_signalled/&gt;&#13;&#10;    &lt;/conditions&gt;&#13;&#10;    &lt;actions&gt;&#13;&#10;        ...&#13;&#10;&#13;&#10;        &lt;set_value name=&quot;$result&quot; exact=&quot;@event.param&quot; /&gt;&#13;&#10;        &lt;debug_text text=&quot;'Command %s completed with result %s (%s)'.[@$result.$command, @$result.$result, @$result.$info]&quot; chance=&quot;100&quot; filter=&quot;general&quot; /&gt;&#13;&#10;        ...&#13;&#10;    &lt;/actions&gt;&#13;&#10;&lt;/cue&gt;&#13;&#10;[/code]&#13;&#10;&#13;&#10;[h2]More details please see in README.md file or on Nexus Mods in description, due to size limitation for descriptions on Steam[/h2]&#13;&#10;&#13;&#10;[h2][b]Reference[/b][/h2]&#13;&#10;&#13;&#10;Currently, there is only one mod that uses this API - [b]Gate Manager[/b], from version 1.16 and above:&#13;&#10;[list]&#13;&#10;[*] [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3577926900]On Steam[/url]&#13;&#10;[*] [url=https://www.nexusmods.com/x4foundations/mods/1842]On Nexus Mods[/url]&#13;&#10;[/list]&#13;&#10;[h2][b]Credits[/b][/h2]&#13;&#10;[list]&#13;&#10;[*] Author: Chem O`Dun, on [url=https://next.nexusmods.com/profile/ChemODun/mods?gameId=2659]Nexus Mods[/url] and [url=https://steamcommunity.com/id/chemodun/myworkshopfiles/?appid=392160]Steam Workshop[/url]&#13;&#10;[*] [i]&quot;X4: Foundations&quot;[/i] is a trademark of [url=https://www.egosoft.com]Egosoft[/url].&#13;&#10;[/list]&#13;&#10;[h2][b]Acknowledgements[/b][/h2]&#13;&#10;[list]&#13;&#10;[*] [url=https://www.egosoft.com]EGOSOFT[/url] - for the game itself (In fact - for the series of games)!&#13;&#10;[*] Enormous big thank to [url=https://github.com/Forleyor]Forleyor[/url], for his help with Lua! For make me curious about it and for his patience! Without him I will never touched the Lua and started to make this mod!&#13;&#10;[*] Thanks to [b]cheapman44[/b] for the discussion on Discord about the gate management which pushed me to make this API.&#13;&#10;[*] Thanks to all members of the [url=https://discord.com/channels/337098290917146624/502057640877228042]X4 modding channel[/url] on [url=https://discord.com/invite/zhs8sRpd3m]Egosoft Discord[/url].&#13;&#10;[/list]&#13;&#10;[h2][b]Changelog[/b][/h2]&#13;&#10;&#13;&#10;[h2][1.00] - 2024-10-17[/h2]&#13;&#10;[list]&#13;&#10;[*] Added&#13;&#10;[list]&#13;&#10;[*] Initial public version&#13;&#10;[/list]&#13;&#10;[/list]">
   <text language="7"
@@ -38,14 +40,16 @@
   <text language="81" description="X4: Foundations においてジャンプゲートとアクセラレーターを管理するゲーム内 API を提供します。この API はゲートとアクセラレーターの作成、接続または切断、および破壊をサポートします。"></text>
   <!-- Korean -->
   <text language="82" description="X4: Foundations에서 점프 게이트와 가속기를 관리하는 게임 내 API를 제공합니다. 이 API는 게이트와 가속기를 생성하고 연결하거나 연결을 해제하며 파괴하는 기능을 지원합니다."></text>
-  <!-- Chinese -->
+  <!-- Chinese Simplified -->
   <text language="86" description="在《X4：基石》中提供用于管理跃迁门和加速器的游戏内 API。该 API 支持创建、连接或断开以及摧毁各类跃迁门与加速器。"></text>
-  <!-- Bengali -->
-  <text language="88"
-    description="X4: Foundations-এ জাম্প গেট ও অ্যাক্সেলারেটর পরিচালনার জন্য একটি ইন-গেম API প্রদান করে। এই API জাম্প গেট ও অ্যাক্সেলারেটর তৈরি, সংযোগ বা সংযোগ বিচ্ছিন্ন করা এবং ধ্বংস করার সুবিধা দেয়।"></text>
+  <!-- Chinese Traditional -->
+  <text language="88" description="在《X4：基石》中提供用於管理躍遷門和加速器的遊戲內 API。該 API 支援建立、連接或斷開以及摧毀各類躍遷門與加速器。"></text>
   <!-- Turkish -->
   <text language="90"
     description="X4: Foundations içinde Sıçrama Kapıları ve Hızlandırıcıları yönetmek için oyun içi bir API sağlar. API, kapı ve hızlandırıcıların oluşturulmasını, bağlanmasını veya bağlantısının kesilmesini ve yok edilmesini destekler."></text>
+  <!-- Bulgarian -->
+  <text language="359"
+    description="Предоставя вътрешноигрово API за управление на скокови портали и ускорители в X4: Foundations. API поддържа създаване, свързване или прекъсване на връзката, както и унищожаване на портали и ускорители."></text>
   <!-- Ukrainian -->
   <text language="380"
     description="Надає внутрішньоігровий API для керування стрибковими брамами та прискорювачами в X4: Foundations. API підтримує створення, підключення або відключення та знищення брам і прискорювачів."></text>
